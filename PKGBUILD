@@ -25,5 +25,5 @@ package() {
     mkdir -pv "$pkgdir/var/lib/${pkgname}"
     cp -r "${srcdir}/${pkgname}/templates" "$pkgdir/var/lib/${pkgname}/"
     cp -r "${srcdir}/${pkgname}/static" "$pkgdir/var/lib/${pkgname}/"
-    install -D "${srcdir}/${pkgname}/stash-example.toml "${pkgdir}/etc/stash.toml
+    install -D "${srcdir}/${pkgname}/stash-example.toml" "${pkgdir}/etc/stash.toml"
 }
