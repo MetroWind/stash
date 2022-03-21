@@ -15,13 +15,13 @@ prepare() {
 }
 
 build() {
+    cd "${srcdir}/${pkgname}"
 	export CARGO_TARGET_DIR=target
 	cargo build --release
 }
 
 package() {
-	cd "$_archive"
-	install -Dm0755 -t "$pkgdir/usr/bin/" "target/release/${pkgname}"
+	install -Dm0755 -t "$pkgdir/usr/bin/" "${srcdir}/${pkgname}/target/release/${pkgname}"
     install -D -t "$pkgdir/var/lib/${pkgname}/" "${srcdir}/${pkgname}/templates"
     install -D -t "$pkgdir/var/lib/${pkgname}/" "${srcdir}/${pkgname}/static"
     install -D "${srcdir}/${pkgname}/stash-example.toml "${pkgdir}/etc/stash.toml
