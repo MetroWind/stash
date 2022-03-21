@@ -5,7 +5,7 @@ pkgdesc='A naively simple read-it-later service'
 arch=(x86_64 i686 armv6h armv7h)
 url='https://github.com/MetroWind/stash'
 license=(WTFPL)
-makedepends=(cargo sqlite rustup git)
+makedepends=(sqlite rustup git)
 depends=(sqlite)
 source=("git+${url}.git")
 sha256sums=('SKIP')
@@ -22,7 +22,7 @@ build() {
 package() {
 	cd "$_archive"
 	install -Dm0755 -t "$pkgdir/usr/bin/" "target/release/${pkgname}"
-    install -D -t "$pkgdir/var/lib/${pkgname}/" templates
-    install -D -t "$pkgdir/var/lib/${pkgname}/" static
-    install -D stash-example.toml /etc/stash.toml
+    install -D -t "$pkgdir/var/lib/${pkgname}/" "${srcdir}/${pkgname}/templates"
+    install -D -t "$pkgdir/var/lib/${pkgname}/" "${srcdir}/${pkgname}/static"
+    install -D "${srcdir}/${pkgname}/stash-example.toml "${pkgdir}/etc/stash.toml
 }
