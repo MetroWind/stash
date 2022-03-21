@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Stash!{% endblock title %}
+
+{% block body %}
+<ul class="EntryList">
+  {% for entry in entries %}
+  <li class="Entry">
+    <div class="EntryTitle">
+      <a href="/read/{{ entry.uri | urlencode }}">{{ entry.title }}</a>
+    </div>
+    <div class="EntryURI">{{ entry.uri }}</div>
+    <div class="EntryTime">{{ entry.time_add }}</div>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock body %}

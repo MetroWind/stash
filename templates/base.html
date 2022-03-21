@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/icon-32.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>{% block title %}{% endblock title %}</title>
+  </head>
+  <body>
+    <nav>
+      <div id="NavInner">
+        <h1 id="TheTitle"><a href="/">Stash</a></h1>
+        <a id="BtnAdd" href="/add">+</a>
+      </div>
+    </nav>
+    <div id="Main">
+      {% block body %}
+      {% endblock body %}
+    </div>
+  </body>
+</html>
