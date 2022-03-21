@@ -6,6 +6,7 @@ After=network.target
 User=stash
 Group=stash
 ExecStart=/usr/bin/stash
+Environment="RUST_LOG=info"
 
 [Install]
 WantedBy=multi-user.target

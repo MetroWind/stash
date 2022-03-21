@@ -10,7 +10,7 @@ depends=(sqlite)
 source=("git+${url}.git" "sysusers-stash.conf" "stash.service")
 sha256sums=('SKIP'
             '975c2e5d16c8a91335845fd1223359d704c2b7007de6c301c09c85c4b6e0013b'
-            'e856a55e71dfc701001f6729a0e42504f25e68a5c037389389d2567c1e4487e2')
+            'c7ba4e06a93dbc0bb52c54a7d2112f03f751a5e70247abd9580d25463e5929a8')
 
 pkgver() {
   cd "$pkgname"
