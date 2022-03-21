@@ -10,18 +10,23 @@ depends=(sqlite)
 source=("git+${url}.git")
 sha256sums=('SKIP')
 
+pkgver() {
+  cd "$pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
 prepare() {
     rustup install --profile minimal nightly
 }
 
 build() {
     cd "${srcdir}/${pkgname}"
-	export CARGO_TARGET_DIR=target
-	cargo build --release
+    export CARGO_TARGET_DIR=target
+    cargo build --release
 }
 
 package() {
-	install -Dm0755 -t "$pkgdir/usr/bin/" "${srcdir}/${pkgname}/target/release/${pkgname}"
+    install -Dm0755 -t "$pkgdir/usr/bin/" "${srcdir}/${pkgname}/target/release/${pkgname}"
     mkdir -pv "$pkgdir/var/lib/${pkgname}"
     cp -r "${srcdir}/${pkgname}/templates" "$pkgdir/var/lib/${pkgname}/"
     cp -r "${srcdir}/${pkgname}/static" "$pkgdir/var/lib/${pkgname}/"

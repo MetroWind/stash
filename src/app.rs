@@ -166,6 +166,7 @@ fn handleAddSubmit(data_source: &data::DataManager, templates: &Tera,
         "(No title)".to_owned()
     };
     let user = getSession(data_source)?.user;
+    debug!("Adding entry for {}...", uri_str);
     let entry = data::Entry {
         uri: uri_str,
         title: title,
@@ -178,6 +179,7 @@ fn handleAddSubmit(data_source: &data::DataManager, templates: &Tera,
 fn handleRead(data_source: &data::DataManager, uri: String) ->
     Result<Response, Error>
 {
+    debug!("Reading entry at {}...", uri);
     let uri = urlencoding::decode(&uri).map_err(
         |_| rterr!("Failed to decode URI: {}", uri))
         .map(|v| v.into_owned())?;
@@ -185,7 +187,13 @@ fn handleRead(data_source: &data::DataManager, uri: String) ->
     let entry = data_source.findEntryByURI(&user, &uri)?.ok_or_else(
         || rterr!("Entry not found @ {}", uri))?;
     data_source.readEntry(&user, &entry)?;
-    Ok(warp::redirect(uri.parse::<warp::http::Uri>().unwrap()).into_response())
+    // Redirect to the URI, but ask the browser to not cache it. If
+    // the browser caches it, and the user read the URI again (after
+    // adding the URI again), the browser may skip the query and
+    // directly load the URI from cache.
+    Ok(warp::reply::with_header(
+        warp::redirect(uri.parse::<warp::http::Uri>().unwrap()).into_response(),
+        "Cache-Control", "no-cache").into_response())
 }
 
 impl App
