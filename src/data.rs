@@ -19,8 +19,6 @@ impl User
     {
         Self{ id: id, name: name, }
     }
-
-    pub fn id(&self) -> i64 { self.id }
 }
 
 pub struct Entry
@@ -45,6 +43,7 @@ impl Serialize for Entry
     }
 }
 
+#[allow(dead_code)]
 pub struct ReadEntry
 {
     pub uri: String,
@@ -53,6 +52,7 @@ pub struct ReadEntry
     pub time_read: chrono::DateTime<Utc>,
 }
 
+#[allow(dead_code)]
 #[derive(Clone)]
 pub enum SqliteFilename { InMemory, File(std::path::PathBuf) }
 
@@ -65,6 +65,7 @@ pub struct DataManager
 
 impl DataManager
 {
+    #[allow(dead_code)]
     pub fn new(f: SqliteFilename) -> Self
     {
         Self { filename: f, connection: None }

@@ -1,4 +1,3 @@
-use std::str::FromStr;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use log::error as log_error;
@@ -70,7 +69,7 @@ fn getTitleForTweet(tweet_uri: &str) -> Result<String, Error>
         .call().map_err(
             |e| rterr!("Failed to query Twitter oEmbed API: {}", e))?
         .into_json().map_err(
-            |e| rterr!("Invalid oEmbed response"))?;
+            |_| rterr!("Invalid oEmbed response"))?;
     let html = data["html"].as_str().ok_or_else(
         || rterr!("Failed to get HTML from oEmbed response"))?;
     let the_match = regex::Regex::new(
@@ -135,8 +134,7 @@ fn handleIndex(data_source: &data::DataManager, templates: &Tera) ->
 
 fn handleAdd(templates: &Tera) -> Result<String, Error>
 {
-    let mut context = tera::Context::new();
-    if let Ok(s) = templates.render("add.html", &context)
+    if let Ok(s) = templates.render("add.html", &tera::Context::new())
     {
         Ok(s)
     }
@@ -146,7 +144,7 @@ fn handleAdd(templates: &Tera) -> Result<String, Error>
     }
 }
 
-fn handleAddSubmit(data_source: &data::DataManager, templates: &Tera,
+fn handleAddSubmit(data_source: &data::DataManager,
                    mut form_data: HashMap<String, String>) ->
     Result<Response, Error>
 {
@@ -192,7 +190,7 @@ fn handleRead(data_source: &data::DataManager, uri: String) ->
     // adding the URI again), the browser may skip the query and
     // directly load the URI from cache.
     Ok(warp::reply::with_header(
-        warp::redirect(uri.parse::<warp::http::Uri>().unwrap()).into_response(),
+        warp::redirect(uri.parse::<warp::http::Uri>().unwrap()),
         "Cache-Control", "no-cache").into_response())
 }
 
@@ -201,8 +199,7 @@ impl App
     pub fn new(config: Configuration) -> Self
     {
         Self {
-            data_source: data::DataManager::new(
-                data::SqliteFilename::File(PathBuf::from(&config.db_path))),
+            data_source: data::DataManager::newWithFilename(&config.db_path),
             templates: Tera::default(),
             config: config,
         }
@@ -242,18 +239,16 @@ impl App
         });
 
         let temp = self.templates.clone();
-        let manager = self.data_source.clone();
         let add = warp::get().and(warp::path("add")).map(move || {
             handleAdd(&temp).toResponse()
         });
 
-        let temp = self.templates.clone();
         let manager = self.data_source.clone();
         let add_submit = warp::post().and(warp::path("add"))
             .and(warp::body::content_length_limit(1024 * 32))
             .and(warp::body::form())
             .map(move |form: HashMap<String, String>| {
-            handleAddSubmit(&manager, &temp, form).toResponse()
+            handleAddSubmit(&manager, form).toResponse()
         });
 
         let manager = self.data_source.clone();

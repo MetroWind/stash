@@ -1,4 +1,3 @@
-use crate::error;
 use crate::error::Error;
 use crate::data;
 
