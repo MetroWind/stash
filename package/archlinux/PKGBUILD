@@ -7,8 +7,10 @@ url='https://github.com/MetroWind/stash'
 license=(WTFPL)
 makedepends=(sqlite rustup git)
 depends=(sqlite)
-source=("git+${url}.git")
-sha256sums=('SKIP')
+source=("git+${url}.git" "sysusers-stash.conf" "stash.service")
+sha256sums=('SKIP'
+            '975c2e5d16c8a91335845fd1223359d704c2b7007de6c301c09c85c4b6e0013b'
+            'e856a55e71dfc701001f6729a0e42504f25e68a5c037389389d2567c1e4487e2')
 
 pkgver() {
   cd "$pkgname"
@@ -30,5 +32,7 @@ package() {
     mkdir -pv "$pkgdir/var/lib/${pkgname}"
     cp -r "${srcdir}/${pkgname}/templates" "$pkgdir/var/lib/${pkgname}/"
     cp -r "${srcdir}/${pkgname}/static" "$pkgdir/var/lib/${pkgname}/"
-    install -D "${srcdir}/${pkgname}/stash-example.toml" "${pkgdir}/etc/stash.toml"
+    install -Dm644 "${srcdir}/${pkgname}/stash-example.toml" "${pkgdir}/etc/stash.toml"
+    install -Dm644 "sysusers-stash.conf" "${pkgdir}/usr/lib/sysusers.d/stash.conf"
+    install -Dm644 "stash.service" "${pkgdir}/usr/lib/systemd/system/stash.service"
 }

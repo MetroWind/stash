@@ -15,15 +15,17 @@ WORKDIR /tmp
 RUN git clone https://github.com/MetroWind/stash.git
 RUN mkdir build
 WORKDIR build
-RUN cp ../stash/PKGBUILD ./
+RUN cp ../stash/package/archlinux/* ./
 RUN rm -rf ../stash
 # Uncomment to test local PKGBUILD
-# COPY PKGBUILD ./
+# COPY package/archlinux/* ./
 RUN sudo chown build:build PKGBUILD
 RUN makepkg -sr --noconfirm --force
 
 USER root
 RUN pacman -U --noconfirm stash-*-x86_64.pkg.tar.zst
 
+WORKDIR /
+RUN rm -rf /tmp/build
 ENV RUST_LOG=info,stash=debug
 ENTRYPOINT ["stash"]

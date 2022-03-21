@@ -1,0 +1,11 @@
+[Unit]
+Description=Stash service
+After=network.target
+
+[Service]
+User=stash
+Group=stash
+ExecStart=/usr/bin/stash
+
+[Install]
+WantedBy=multi-user.target
