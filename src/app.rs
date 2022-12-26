@@ -174,7 +174,7 @@ fn handleAddSubmit(data_source: &data::DataManager,
     Ok(see_other(warp::http::Uri::from_static("/")).into_response())
 }
 
-fn handleRead(data_source: &data::DataManager, uri: String) ->
+fn handleRead(data_source: &data::DataManager, uri: &str) ->
     Result<Response, Error>
 {
     debug!("Reading entry at {}...", uri);
@@ -252,10 +252,10 @@ impl App
         });
 
         let manager = self.data_source.clone();
-        let read = warp::get().and(warp::path("read"))
-            .and(warp::path::param())
-            .map(move |uri: String| {
-            handleRead(&manager, uri).toResponse()
+        let read = warp::post().and(warp::path("read"))
+            .and(warp::body::form())
+            .map(move |form: HashMap<String, String>| {
+            handleRead(&manager, &form["url"]).toResponse()
         });
 
         info!("Listening at {}:{}...", self.config.listen_address,

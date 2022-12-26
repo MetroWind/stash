@@ -1,5 +1,5 @@
 pkgname=stash
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='A naively simple read-it-later service'
 arch=(x86_64 i686 armv6h armv7h)
@@ -18,7 +18,7 @@ pkgver() {
 }
 
 prepare() {
-    rustup install --profile minimal nightly
+    rustup install --profile minimal stable
 }
 
 build() {

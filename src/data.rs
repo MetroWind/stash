@@ -199,13 +199,24 @@ impl DataManager
                      user.id),
             sql::params![uri],
             |row: &sql::Row|->sql::Result<Entry> {
+                let time_value = row.get(2)?;
+                let time = if let chrono::LocalResult::Single(t) =
+                    Utc.timestamp_opt(time_value, 0)
+                {
+                    t
+                }
+                else
+                {
+                    return Err(sql::Error::IntegralValueOutOfRange(
+                        2, time_value));
+                };
                 Ok(Entry {
                     uri: row.get(0)?,
                     title: row.get(1)?,
-                    time_add: Utc.timestamp(row.get(2)?, 0),
+                    time_add: time,
                 })
             }).optional().map_err(
-            |_| error!(DataError, "Failed to look up entry @ {}", uri))
+            |e| error!(DataError, "Failed to look up entry @ {}: {}", uri, e))
     }
 
     pub fn readEntry(&self, user: &User, item: &Entry) -> Result<(), Error>
@@ -241,12 +252,23 @@ impl DataManager
                 "Failed to compare statement to get entries: {}", e))?;
         let mut result = Vec::new();
         let rows = cmd.query_map([count, start_index], |row| {
+            let time_value = row.get(2)?;
+            let time = if let chrono::LocalResult::Single(t) =
+                Utc.timestamp_opt(time_value, 0)
+            {
+                t
+            }
+            else
+            {
+                return Err(sql::Error::IntegralValueOutOfRange(
+                    2, time_value));
+            };
             Ok(Entry{
                 uri: row.get(0)?,
                 title: row.get(1)?,
-                time_add: Utc.timestamp(row.get(2)?, 0),
+                time_add: time,
             })
-        }).map_err(|_| error!(DataError, "Failed to retrieve entries"))?;
+        }).map_err(|e| error!(DataError, "Failed to retrieve entries: {}", e))?;
         for row in rows
         {
             result.push(row.map_err(

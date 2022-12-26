@@ -113,7 +113,7 @@ a
     text-decoration: none;
 }
 
-a:hover
+a:hover button:hover
 {
     background-color: var(--color-fg);
     color: var(--color-bg);
@@ -185,10 +185,12 @@ li.Entry{
     line-height: 1.5;
 }
 
-.EntryTitle
+button.EntryTitle
 {
     white-space: nowrap;
     overflow: hidden;
+    width: 100%;
+    cursor: pointer;
 }
 
 .EntryURI
@@ -197,6 +199,11 @@ li.Entry{
     color: var(--color-fg-alt);
     white-space: nowrap;
     overflow: hidden;
+}
+
+input.URLText
+{
+    display: none;
 }
 
 .EntryTime

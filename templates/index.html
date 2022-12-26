@@ -5,9 +5,13 @@
 <ul class="EntryList">
   {% for entry in entries %}
   <li class="Entry">
-    <div class="EntryTitle">
-      <a href="/read/{{ entry.uri | urlencode }}">{{ entry.title }}</a>
-    </div>
+    <form name="form" action="read" method="post">
+      <input class="URLText" type="text" name="url" id="url" value="{{ entry.uri | urlencode }}" />
+      <button class="EntryTitle">{{ entry.title }}</button>
+    </form>
+    <!-- <div class="EntryTitle"> -->
+    <!--   <a href="/read/{{ entry.uri | urlencode }}">{{ entry.title }}</a> -->
+    <!-- </div> -->
     <div class="EntryURI">{{ entry.uri }}</div>
     <div class="EntryTime">{{ entry.time_add }}</div>
   </li>
