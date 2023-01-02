@@ -121,11 +121,19 @@ pub struct App
     config: Configuration,
 }
 
-fn handleIndex(data_source: &data::DataManager, templates: &Tera) ->
-    Result<String, Error>
+fn handleIndex(data_source: &data::DataManager, templates: &Tera,
+               conf: &Configuration) -> Result<String, Error>
 {
     let user = getSession(data_source)?.user;
-    let entries = data_source.getEntries(&user, 0, 50)?;
+    let order = if conf.old_first
+    {
+        data::EntryOrder::OldFirst
+    }
+    else
+    {
+        data::EntryOrder::NewFirst
+    };
+    let entries = data_source.getEntries(&user, 0, 50, order)?;
     let mut context = tera::Context::new();
     context.insert("entries", &entries);
     templates.render("index.html", &context).map_err(
@@ -234,8 +242,9 @@ impl App
 
         let temp = self.templates.clone();
         let manager = self.data_source.clone();
+        let conf = self.config.clone();
         let index = warp::get().and(warp::path::end()).map(move || {
-            handleIndex(&manager, &temp).toResponse()
+            handleIndex(&manager, &temp, &conf).toResponse()
         });
 
         let temp = self.templates.clone();

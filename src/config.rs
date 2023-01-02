@@ -3,7 +3,9 @@ use serde::Deserialize;
 use crate::error;
 use crate::error::Error;
 
-#[derive(Deserialize)]
+fn defaultOldFirst() -> bool { false }
+
+#[derive(Deserialize, Clone)]
 pub struct Configuration
 {
     pub data_dir: String,
@@ -11,6 +13,8 @@ pub struct Configuration
     pub listen_address: String,
     pub listen_port: u16,
     pub log_timestamp: bool,
+    #[serde(default = "defaultOldFirst")]
+    pub old_first: bool,
 }
 
 impl Default for Configuration
@@ -23,6 +27,7 @@ impl Default for Configuration
             listen_address: "127.0.0.1".to_owned(),
             listen_port: 8080,
             log_timestamp: false,
+            old_first: false,
         }
     }
 }

@@ -21,6 +21,12 @@ impl User
     }
 }
 
+pub enum EntryOrder
+{
+    NewFirst,
+    OldFirst,
+}
+
 pub struct Entry
 {
     pub uri: String,
@@ -240,13 +246,20 @@ impl DataManager
     /// Retrieve “count” number of latest entries, starting from the
     /// entry at index “start_index”. Index starts at 0. Returned
     /// entries are sorted from new to old.
-    pub fn getEntries(&self, user: &User, start_index: u64, count: u64) ->
-        Result<Vec<Entry>, Error>
+    pub fn getEntries(&self, user: &User, start_index: u64, count: u64,
+                      order: EntryOrder) -> Result<Vec<Entry>, Error>
     {
         let conn = self.confirmConnection()?;
+
+        let order_expr = match order
+        {
+            EntryOrder::NewFirst => "ORDER BY time_add DESC",
+            EntryOrder::OldFirst => "ORDER BY time_add ASC",
+        };
+
         let mut cmd = conn.prepare(
             &format!("SELECT uri, title, time_add FROM stash_{}
-                     ORDER BY time_add DESC LIMIT ? OFFSET ?;", user.id))
+                     {} LIMIT ? OFFSET ?;", user.id, order_expr))
             .map_err(|e| error!(
                 DataError,
                 "Failed to compare statement to get entries: {}", e))?;
